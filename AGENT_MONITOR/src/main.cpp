@@ -17,6 +17,9 @@ bool computeMotion2D(TRBuffer< Entity* > confBuffer, unsigned long timelapse, do
     Entity* entNew = confBuffer.getDataFromIndex(confBuffer.size() - 1);
 
     index = confBuffer.getIndexAfter(timeOld);
+    // In case we don't have the index, we will just put isMoving to false
+    if(index == -1)
+      return false;
     actualTimelapse = timeNew - confBuffer.getTimeFromIndex(index); // Actual timelapse
     Entity* entOld = confBuffer.getDataFromIndex(index);
 
@@ -165,17 +168,25 @@ int main(int argc, char** argv) {
         //////////////////////////////////////
 
         if ((!humanMonitored && (robotRd.lastConfig_[agentMonitored] != NULL))
-                || (humanMonitored && (humanRd.lastConfig_[agentMonitored] != NULL))) {
-
+                || (humanMonitored && ( humanRd.lastConfig_[agentMonitored] != NULL) ) ) {
             // We add the agent to the mapTRBEntity and update roomOfInterest
+            printf("current human time: %lu\n", humanRd.lastConfig_[agentMonitored]->getTime());
             if (humanMonitored) {
                 roomOfInterest = humanRd.lastConfig_[agentMonitored]->getRoomId();
                 // If this is a new data we add it
 
                 if ((mapTRBEntity[agentMonitored].empty()) || (mapTRBEntity[agentMonitored].back()->getTime() < humanRd.lastConfig_[agentMonitored]->getTime())) {
-                    humCur = humanRd.lastConfig_[agentMonitored];
+                    /*humCur = humanRd.lastConfig_[agentMonitored];
                     humanRd.lastConfig_[agentMonitored] = new Human(agentMonitored);
+                    */
+                    humCur = new Human(agentMonitored);
+                    memcpy(humCur, humanRd.lastConfig_[agentMonitored], sizeof(Human));
+                    
                     mapTRBEntity[agentMonitored].push_back(humCur->getTime(), humCur);
+                } else {
+                    printf("agent recieved without greater time: current is %lu < previous is %lu\n", humanRd.lastConfig_[agentMonitored]->getTime(), mapTRBEntity[agentMonitored].back()->getTime());
+                    ros::spinOnce();
+                    continue;
                 }
             } else {
                 roomOfInterest = robotRd.lastConfig_[agentMonitored]->getRoomId();
@@ -232,8 +243,9 @@ int main(int argc, char** argv) {
 
             if (mapTRBEntity[agentMonitored].empty()) {
                 printf("[AGENT_MONITOR][WARNING] agent monitored not found\n");
-            } else {
-                printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
+            }else{
+                printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
+                //printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
                 if (computeMotion2D(mapTRBEntity[agentMonitored], oneSecond / 4, 0.03)) {
                     printf("[AGENT_MONITOR][DEBUG] %s is moving %lu\n", mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
 

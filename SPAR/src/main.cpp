@@ -144,8 +144,8 @@ int main(int argc, char** argv) {
     /************************/
 
     while (node.ok()) {
-        if ((humanRd.lastConfig_[101] != NULL) || (robotRd.lastConfig_[1] != NULL)) {
-            // We update area with robot center
+        if ((humanRd.lastConfig_[101] != NULL)  || (robotRd.lastConfig_[1] != NULL)) {
+	    // We update area with robot center
             //TODO: Update this only if they are in same room?
             if (robotRd.lastConfig_[1] != NULL)
                 updateEntityArea(mapArea, robotRd.lastConfig_[1]);
@@ -155,12 +155,14 @@ int main(int argc, char** argv) {
             updateInArea(humanRd.lastConfig_[101], mapArea);
             updateInArea(robotRd.lastConfig_[1], mapArea);
 
-            if (humanRd.lastConfig_[101]->isInArea(0)) {
+          if (humanRd.lastConfig_[101]->isInArea(0)) {
 
                 //Fact
                 fact_msg.property = "isInArea";
                 fact_msg.subProperty = "interacting";
                 fact_msg.subjectId = 101;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = robotRd.lastConfig_[1]->getName();
                 fact_msg.targetId = 1;
                 fact_msg.confidence = 100;
                 fact_msg.time = humanRd.lastConfig_[101]->getTime();
@@ -179,6 +181,8 @@ int main(int argc, char** argv) {
                         fact_msg.property = "isFacing";
                         fact_msg.subProperty = "orientationAngle";
                         fact_msg.subjectId = 101;
+                        fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                        fact_msg.targetName = robotRd.lastConfig_[1]->getName();
                         fact_msg.targetId = 1;
                         fact_msg.confidence = confidence * 100;
                         fact_msg.time = humanRd.lastConfig_[101]->getTime();
@@ -194,6 +198,8 @@ int main(int argc, char** argv) {
                 fact_msg.subProperty = "Danger";
                 fact_msg.subjectId = 101;
                 fact_msg.targetId = 1;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = robotRd.lastConfig_[1]->getName();
                 fact_msg.confidence = 100;
                 fact_msg.time = humanRd.lastConfig_[101]->getTime();
 
@@ -208,7 +214,9 @@ int main(int argc, char** argv) {
             fact_msg.property = "isInArea";
             fact_msg.subProperty = "Room";
             fact_msg.subjectId = 101;
+            fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
             fact_msg.targetId = humanRd.lastConfig_[101]->getRoomId();
+            fact_msg.targetName = mapArea[humanRd.lastConfig_[101]->getRoomId()]->getName();
             fact_msg.confidence = 100;
             fact_msg.time = humanRd.lastConfig_[101]->getTime();
 

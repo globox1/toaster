@@ -31,11 +31,11 @@ rosbuild_gensrv()
 
 
 
-set(BOOST_ROOT /home/gmilliez/devel/boost_1_56_0/)
+set(BOOST_ROOT /home/mfiore/devel/boost_1_56_0/)
 set(Boost_NO_SYSTEM_PATHS ON)
 
 find_package(Boost REQUIRED COMPONENTS)# system)
-include_directories(${Boost_INCLUDE_DIRS} /home/gmilliez/devel/include /home/gmilliez/work/toaster/SPAR/include)
+include_directories(${Boost_INCLUDE_DIRS} /home/mfiore/devel/include ../SPAR/include)
 rosbuild_add_executable(belief_manager ../SPAR/src/PDGObjectReader.cpp ../SPAR/src/PDGFactReader.cpp src/main.cpp)
-target_link_libraries(belief_manager /home/gmilliez/devel/lib/libtoaster.so)
+target_link_libraries(belief_manager /home/mfiore/devel/lib/libtoaster.so)
 

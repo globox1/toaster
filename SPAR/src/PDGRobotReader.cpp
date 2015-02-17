@@ -20,6 +20,8 @@ void PDGRobotReader::robotJointStateCallBack(const PDG::RobotList::ConstPtr& msg
         else
             curRobot = lastConfig_[msg->robotList[i].meAgent.meEntity.id];
 
+        curRobot->setName(msg->robotList[i].meAgent.meEntity.name);
+
         std::vector<double> robOrientation;
         bg::model::point<double, 3, bg::cs::cartesian> robPosition;
 

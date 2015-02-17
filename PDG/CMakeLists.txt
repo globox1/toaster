@@ -26,13 +26,13 @@ rosbuild_genmsg()
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
-set(BOOST_ROOT /home/gmilliez/devel/boost_1_56_0/)
+set(BOOST_ROOT /home/mfiore/devel/boost_1_56_0/)
 set(Boost_NO_SYSTEM_PATHS ON)
 
 find_package(Boost REQUIRED COMPONENTS)# system)
-include_directories(${Boost_INCLUDE_DIRS} /home/gmilliez/devel/include /home/gmilliez/openrobots/include/)
+include_directories(${Boost_INCLUDE_DIRS} /home/mfiore/devel/include /home/mfiore/openrobots/include/)
 rosbuild_add_executable(pdg src/MorseHumanReader.cpp src/NiutHumanReader.cpp src/HumanReader.cpp src/Pr2RobotReader.cpp src/RobotReader.cpp src/ObjectReader.cpp src/VimanObjectReader.cpp src/SparkObjectReader.cpp src/middleware/GenomPoster.cpp src/main.cpp)
 #This is for vimanReader.
 target_link_libraries(pdg $ENV{ROBOTPKG_BASE}/lib/libposterLib.so)
-target_link_libraries(pdg /home/gmilliez/devel/lib/libtoaster.so)
+target_link_libraries(pdg /home/mfiore/devel/lib/libtoaster.so)
 
