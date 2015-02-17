@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
         if ((!humanMonitored && (robotRd.lastConfig_[agentMonitored] != NULL))
                 || (humanMonitored && ( humanRd.lastConfig_[agentMonitored] != NULL) ) ) {
             // We add the agent to the mapTRBEntity and update roomOfInterest
-            printf("current human time: %lu\n", humanRd.lastConfig_[agentMonitored]->getTime());
+            //printf("current human time: %lu\n", humanRd.lastConfig_[agentMonitored]->getTime());
             if (humanMonitored) {
                 roomOfInterest = humanRd.lastConfig_[agentMonitored]->getRoomId();
                 // If this is a new data we add it
@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
                     
                     mapTRBEntity[agentMonitored].push_back(humCur->getTime(), humCur);
                 } else {
-                    printf("agent recieved without greater time: current is %lu < previous is %lu\n", humanRd.lastConfig_[agentMonitored]->getTime(), mapTRBEntity[agentMonitored].back()->getTime());
+                    //printf("agent recieved without greater time: current is %lu < previous is %lu\n", humanRd.lastConfig_[agentMonitored]->getTime(), mapTRBEntity[agentMonitored].back()->getTime());
                     ros::spinOnce();
                     continue;
                 }
@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
             if (mapTRBEntity[agentMonitored].empty()) {
                 printf("[AGENT_MONITOR][WARNING] agent monitored not found\n");
             }else{
-                printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
+                //printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
                 //printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
                 if (computeMotion2D(mapTRBEntity[agentMonitored], oneSecond / 4, 0.03)) {
                     printf("[AGENT_MONITOR][DEBUG] %s is moving %lu\n", mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
