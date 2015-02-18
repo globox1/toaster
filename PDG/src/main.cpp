@@ -78,9 +78,11 @@ int main(int argc, char** argv) {
 
         //Objects
 
+        //printf("[PDG][DEBUG] Nb object from SPARK: %d\n", sparkObjectRd.nbObjects_);
+    
         if (object_present)
             for (unsigned int i = 0; i < sparkObjectRd.nbObjects_; i++) {
-                if (sparkObjectRd.isPresent(sparkObjectRd.objectIdOffset_ + i)) {
+                //if (sparkObjectRd.isPresent(sparkObjectRd.objectIdOffset_ + i)) {
                     
                     //Fact
                     fact_msg.property = "isPresent";
@@ -101,7 +103,7 @@ int main(int argc, char** argv) {
 
                     //printf("[PDG] Last time object %d: %lu\n", i, vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i]->getTime());
                     //printf("[PDG] object %d named %s is present\n", vimanObjectRd.objectIdOffset_ + i, vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i]->getName().c_str());
-                }
+                //}
             }
 
         //Humans
