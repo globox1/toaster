@@ -28,7 +28,7 @@ void feelEntity(Entity* srcEntity, PDG::Entity& msgEntity) {
 }
 
 int main(int argc, char** argv) {
-    bool object_present = false;
+    bool object_present = true;
     const bool AGENT_FULL_CONFIG = false; //If false we will use only position and orientation
 
     ros::init(argc, argv, "PDG");
@@ -38,7 +38,9 @@ int main(int argc, char** argv) {
     //Data reading
 //    MorseHumanReader morseHumanRd(node, AGENT_FULL_CONFIG);
     Pr2RobotReader pr2RobotRd(AGENT_FULL_CONFIG);
-    VimanObjectReader vimanObjectRd("morseViman");
+    SparkObjectReader sparkObjectRd("sparkEnvironment");
+//    VimanObjectReader vimanObjectRd("morseViman");
+    
 
     //Data writing
     ros::Publisher object_pub = node.advertise<PDG::ObjectList>("PDG/objectList", 1000);
@@ -67,7 +69,7 @@ int main(int argc, char** argv) {
         //update data
 
         if (object_present)
-            vimanObjectRd.updateObjects();
+            sparkObjectRd.updateObjects();
         //morseHumanRd.updateHumans(listener);
         pr2RobotRd.updateRobot(listener);
 
@@ -76,20 +78,24 @@ int main(int argc, char** argv) {
         //Objects
 
         if (object_present)
-            for (unsigned int i = 0; i < vimanObjectRd.nbObjects_; i++) {
-                if (vimanObjectRd.isPresent(vimanObjectRd.objectIdOffset_ + i)) {
+            for (unsigned int i = 0; i < sparkObjectRd.nbObjects_; i++) {
+                if (sparkObjectRd.isPresent(sparkObjectRd.objectIdOffset_ + i)) {
                     
                     //Fact
                     fact_msg.property = "isPresent";
-                    fact_msg.subjectId = vimanObjectRd.objectIdOffset_ + i;
+                    fact_msg.subjectId = sparkObjectRd.objectIdOffset_ + i;
                     fact_msg.confidence = 90;
-                    fact_msg.time = vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i]->getTime();
+                    fact_msg.time = sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i]->getTime();
+                    fact_msg.subjectName = sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i]->getName();
+                    fact_msg.valueType = 0;
+                    fact_msg.stringValue = "true";
+ 
                     
                     factList_msg.factList.push_back(fact_msg);
                     
                     
                     //Object
-                    feelEntity(vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i], object_msg.meEntity);
+                    feelEntity(sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i], object_msg.meEntity);
                     objectList_msg.objectList.push_back(object_msg);
 
                     //printf("[PDG] Last time object %d: %lu\n", i, vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i]->getTime());
