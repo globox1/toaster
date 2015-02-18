@@ -1,6 +1,7 @@
 #include "PDG/MorseHumanReader.h"
 #include "PDG/Pr2RobotReader.h"
-#include "PDG/VimanObjectReader.h"
+//#include "PDG/VimanObjectReader.h"
+#include "PDG/SparkObjectReader.h"
 
 // Message generated class
 #include <PDG/Entity.h>
