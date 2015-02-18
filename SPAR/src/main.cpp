@@ -154,6 +154,10 @@ int main(int argc, char** argv) {
             // TODO: actually do this for every entities!
             updateInArea(humanRd.lastConfig_[101], mapArea);
             updateInArea(robotRd.lastConfig_[1], mapArea);
+            for(std::map<unsigned int, Object*>::const_iterator it=objectRd.lastConfig_.begin() ; it!=objectRd.lastConfig_.end() ; ++it)
+            {
+              updageInArea(ObjectRd.lastConfig_[it->first], mapArea);
+            }
 
           if (humanRd.lastConfig_[101]->isInArea(0)) {
 
@@ -209,7 +213,21 @@ int main(int argc, char** argv) {
             }
 
             // TODO: For each entities
+            for(std::map<unsigned int, Object*>::const_iterator it=objectRd.lastConfig_.begin() ; it!=objectRd.lastConfig_.end() ; ++it)
+            {
+              //Fact room
+            fact_msg.property = "isInArea";
+            fact_msg.subProperty = "Room";
+            fact_msg.subjectId = it->first;
+            fact_msg.subjectName =  ObjectRd.lastConfig_[it->first]->getName();
+            fact_msg.targetId = humanRd.lastConfig_[it->first]->getRoomId();
+            fact_msg.targetName = mapArea[objectRd.lastConfig_[it->first]->getRoomId()]->getName();
+            fact_msg.confidence = 99;
+            fact_msg.time = objectRd.lastConfig_[101]->getTime();
+
+            }
             
+ 
             //Fact room
             fact_msg.property = "isInArea";
             fact_msg.subProperty = "Room";
@@ -217,7 +235,7 @@ int main(int argc, char** argv) {
             fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
             fact_msg.targetId = humanRd.lastConfig_[101]->getRoomId();
             fact_msg.targetName = mapArea[humanRd.lastConfig_[101]->getRoomId()]->getName();
-            fact_msg.confidence = 100;
+            fact_msg.confidence = 99;
             fact_msg.time = humanRd.lastConfig_[101]->getTime();
 
             factList_msg.factList.push_back(fact_msg);
