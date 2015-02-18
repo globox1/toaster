@@ -2,9 +2,11 @@
 
 #include "SPAR/PDGHumanReader.h"
 #include "SPAR/PDGRobotReader.h"
+#include "SPAR/PDGObjectReader.h"
 #include "toaster-lib/CircleArea.h"
 #include "toaster-lib/PolygonArea.h"
 #include "toaster-lib/MathFunctions.h"
+#include "toaster-lib/MovableObject.h"
 #include <PDG/Fact.h>
 #include <PDG/FactList.h>
 #include <iterator>
@@ -64,7 +66,7 @@ int main(int argc, char** argv) {
     //Data reading
     PDGHumanReader humanRd(node, AGENT_FULL_CONFIG);
     PDGRobotReader robotRd(node, AGENT_FULL_CONFIG);
-    //PDGObjectReader objectRd(node);
+    PDGObjectReader objectRd(node);
 
 
     ros::Publisher fact_pub = node.advertise<PDG::FactList>("SPAR/factList", 1000);
@@ -156,7 +158,7 @@ int main(int argc, char** argv) {
             updateInArea(robotRd.lastConfig_[1], mapArea);
             for(std::map<unsigned int, Object*>::const_iterator it=objectRd.lastConfig_.begin() ; it!=objectRd.lastConfig_.end() ; ++it)
             {
-              updageInArea(ObjectRd.lastConfig_[it->first], mapArea);
+              updateInArea(objectRd.lastConfig_[it->first], mapArea);
             }
 
           if (humanRd.lastConfig_[101]->isInArea(0)) {
@@ -219,7 +221,7 @@ int main(int argc, char** argv) {
             fact_msg.property = "isInArea";
             fact_msg.subProperty = "Room";
             fact_msg.subjectId = it->first;
-            fact_msg.subjectName =  ObjectRd.lastConfig_[it->first]->getName();
+            fact_msg.subjectName =  objectRd.lastConfig_[it->first]->getName();
             fact_msg.targetId = humanRd.lastConfig_[it->first]->getRoomId();
             fact_msg.targetName = mapArea[objectRd.lastConfig_[it->first]->getRoomId()]->getName();
             fact_msg.confidence = 99;
