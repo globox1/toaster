@@ -2,7 +2,7 @@
 
 #include "SPAR/PDGHumanReader.h"
 #include "SPAR/PDGRobotReader.h"
-//#include "SPAR/PDGObjectReader.h"
+#include "SPAR/PDGObjectReader.h"
 #include "PDG/FactList.h"
 #include "PDG/Fact.h"
 #include "toaster-lib/TRBuffer.h"
@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
     //Data reading
     PDGHumanReader humanRd(node, AGENT_FULL_CONFIG);
     PDGRobotReader robotRd(node, AGENT_FULL_CONFIG);
-    //PDGObjectReader objectRd(node);
+    PDGObjectReader objectRd(node);
 
     ros::Publisher fact_pub = node.advertise<PDG::FactList>("AGENT_MONITOR/factList", 1000);
 
@@ -192,8 +192,8 @@ int main(int argc, char** argv) {
                 roomOfInterest = robotRd.lastConfig_[agentMonitored]->getRoomId();
                 // If this is a new data we add it
                 if ((mapTRBEntity[agentMonitored].empty()) || (mapTRBEntity[agentMonitored].back()->getTime() < robotRd.lastConfig_[agentMonitored]->getTime())) {
-                    robCur = robotRd.lastConfig_[agentMonitored];
-                    robotRd.lastConfig_[agentMonitored] = new Robot(agentMonitored);
+                    robCur = new Robot(agentMonitored);
+                    memcpy(robCur, robotRd.lastConfig_[agentMonitored], sizeof(Robot));
                     mapTRBEntity[agentMonitored].push_back(robCur->getTime(), robCur);
                 }
             }
@@ -207,9 +207,8 @@ int main(int argc, char** argv) {
                 if (roomOfInterest == it->second->getRoomId() && it->first != agentMonitored) {
                     // If this is a new data we add it
                     if ((mapTRBEntity[it->first].empty()) || mapTRBEntity[it->first].back()->getTime() < it->second->getTime()) {
-                        Human * hum = it->second;
-                        it->second = new Human(it->first);
-
+                        Human * hum = new Human(it->first);
+                        memcpy(hum, humanRd.lastConfig_[it->first], sizeof(Human));
                         mapTRBEntity[it->first].push_back(hum->getTime(), hum);
                     }
                 } // TODO: else remove
@@ -223,8 +222,8 @@ int main(int argc, char** argv) {
                 if ((roomOfInterest == it->second->getRoomId()) && (it->first != agentMonitored)) {
                     // If this is a new data we add it
                     if ((mapTRBEntity[it->first].empty()) || mapTRBEntity[it->first].back()->getTime() < it->second->getTime()) {
-                        Robot* rob = it->second;
-                        it->second = new Robot(it->first);
+                        Robot* rob  = new Robot(it->first);
+                        memcpy(rob, robotRd.lastConfig_[it->first], sizeof(Robot));
                         mapTRBEntity[it->first].push_back(rob->getTime(), rob);
                     }
                 } // TODO: else remove
@@ -232,6 +231,21 @@ int main(int argc, char** argv) {
             }
 
             //  For Objects
+            for (std::map<unsigned int, Object*>::iterator it = objectRd.lastConfig_.begin(); it != objectRd.lastConfig_.end(); ++it) {
+                // if in same room as monitored agent and not monitored agent
+                if ( roomOfInterest == it->second->getRoomId() ) {
+                    // If this is a new data we add it
+                    if ((mapTRBEntity[it->first].empty()) || mapTRBEntity[it->first].back()->getTime() < it->second->getTime()) {
+                        Object* obj  = new Object(it->first);
+                        memcpy(obj, objectRd.lastConfig_[it->first], sizeof(Object));
+                        mapTRBEntity[it->first].push_back(obj->getTime(), obj);
+                    }
+                } // TODO: else remove
+
+            }
+
+
+
 
             //////////////////////////////////////////////
             // Compute facts concerning monitored agent //
