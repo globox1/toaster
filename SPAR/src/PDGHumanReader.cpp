@@ -43,6 +43,34 @@ void PDGHumanReader::humanJointStateCallBack(const PDG::HumanList::ConstPtr& msg
 
         //TODO: fullHuman
         if (fullHuman_) {
+          Joint * curJnt;
+          for (unsigned int i_jnt = 0; i_jnt < msg->humanList[i].meAgent.skeletonNames.size(); i_jnt++) {
+
+            // If this joint is not assigned we have to allocate data.
+            if (lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ] == NULL)
+              curJnt = new Joint(curHuman->getId(), msg->humanList[i].meAgent.meEntity.id);
+            else
+              curJnt = lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ];
+
+            std::vector<double> jointOrientation;
+            bg::model::point<double, 3, bg::cs::cartesian> jointPosition;
+        
+            curJnt->setAgentId(curHuman->getId());
+            curJnt->setName(msg->humanList[i].meAgent.skeletonNames[i_jnt]);
+            curJnt->setTime(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.time);
+
+            jointPosition.set<0>(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.positionX);
+            jointPosition.set<1>(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.positionY);
+            jointPosition.set<2>(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.positionZ);
+            curJnt->setPosition(jointPosition);
+
+            jointOrientation.push_back(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.orientationRoll);
+            jointOrientation.push_back(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.orientationPitch);
+            jointOrientation.push_back(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.orientationYaw);
+            curJnt->setOrientation(jointOrientation);
+
+            lastConfig_[curHuman->getId()]->skeleton_[curJnt->getName()] = curJnt;
+          }
         }
     }
 }

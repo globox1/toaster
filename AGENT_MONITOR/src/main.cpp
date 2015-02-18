@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
 
     // TODO: add SPAR data reading to get the room of entities.
     //Data reading
-    PDGHumanReader humanRd(node, AGENT_FULL_CONFIG);
+    PDGHumanReader humanRd(node, true);
     PDGRobotReader robotRd(node, AGENT_FULL_CONFIG);
     PDGObjectReader objectRd(node);
 
