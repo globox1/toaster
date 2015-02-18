@@ -48,7 +48,7 @@ void PDGHumanReader::humanJointStateCallBack(const PDG::HumanList::ConstPtr& msg
 
             // If this joint is not assigned we have to allocate data.
             if (lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ] == NULL)
-              curJnt = new Joint(curHuman->getId(), msg->humanList[i].meAgent.meEntity.id);
+              curJnt = new Joint(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.id, msg->humanList[i].meAgent.meEntity.id);
             else
               curJnt = lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ];
 

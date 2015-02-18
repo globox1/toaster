@@ -184,7 +184,9 @@ int main(int argc, char** argv) {
                     */
                     humCur = new Human(agentMonitored);
                     memcpy(humCur, humanRd.lastConfig_[agentMonitored], sizeof(Human));
-                   
+
+                    mapTRBEntity[humCur->getId()].push_back(humCur->getTime(), humCur);                   
+
                     // adding monitored joint to the entities.
                     jntCur = new Joint(humCur->skeleton_[jointMonitoredName]->getId(), agentMonitored);
                     memcpy(jntCur, humanRd.lastConfig_[agentMonitored]->skeleton_[jointMonitoredName], sizeof(Joint));
@@ -267,6 +269,10 @@ int main(int argc, char** argv) {
             if (mapTRBEntity[agentMonitored].empty()) {
                 printf("[AGENT_MONITOR][WARNING] agent monitored not found\n");
             }else{
+                printf("Next step\n");
+                for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
+                  printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
+                }
                 //printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
                 //printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
                 if (computeMotion2D(mapTRBEntity[agentMonitored], oneSecond / 4, 0.03)) {
