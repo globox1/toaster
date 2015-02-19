@@ -172,12 +172,6 @@ int main(int argc, char** argv) {
         //////////////////////////////////////
 
 
-        printf("Loop start\n");
-        for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-          printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-        }
-
-
         if ((!humanMonitored && (robotRd.lastConfig_[agentMonitored] != NULL))
                 || (humanMonitored && ( humanRd.lastConfig_[agentMonitored] != NULL) ) ) {
             // We add the agent to the mapTRBEntity and update roomOfInterest
@@ -188,10 +182,6 @@ int main(int argc, char** argv) {
                 // We verify if the buffer is already there...
                 itTRB = mapTRBEntity.find(agentMonitored);
                 if (itTRB == mapTRBEntity.end()){
-                    printf("Nothing in map \n");
-                    for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                      printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                    }
 
                     //1st time, we initialize variables
                     TRBuffer<Entity*> buffHum, buffJnt;
@@ -202,13 +192,7 @@ int main(int argc, char** argv) {
 
                     buffHum.push_back(humCur->getTime(), humCur);
                     mapTRBEntity[humCur->getId()] = buffHum;                   
-                    printf("adding human named: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[agentMonitored]->getName().c_str(), humCur->getName().c_str(), mapTRBEntity[humCur->getId()].back()->getName().c_str());
-
-                    printf("human added\n");
-                    for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                      printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                    }
-
+                    //printf("adding human named: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[agentMonitored]->getName().c_str(), humCur->getName().c_str(), mapTRBEntity[humCur->getId()].back()->getName().c_str());
 
  
                     // adding monitored joint to the entities.
@@ -218,15 +202,9 @@ int main(int argc, char** argv) {
                     buffJnt.push_back(jntCur->getTime(), jntCur);
  
                     mapTRBEntity[jntCur->getId()] = buffJnt;
-                    printf("adding joint named: reader %d %s, tmp %s, in buffer: %s\n", humCur->skeleton_[jointMonitoredName]->getId(), humCur->skeleton_[jointMonitoredName]->getName().c_str(), jntCur->getName().c_str(), mapTRBEntity[jntCur->getId()].back()->getName().c_str());
+                   // printf("adding joint named: reader %d %s, tmp %s, in buffer: %s\n", humCur->skeleton_[jointMonitoredName]->getId(), humCur->skeleton_[jointMonitoredName]->getName().c_str(), jntCur->getName().c_str(), mapTRBEntity[jntCur->getId()].back()->getName().c_str());
                     if(jointMonitoredId == 0)
                       jointMonitoredId = jntCur->getId();
-
-                    printf("rwirst added\n");
-                    for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                      printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                    }
-
 
                     ros::spinOnce();
                     loop_rate.sleep();
@@ -235,17 +213,11 @@ int main(int argc, char** argv) {
                 // If this is a new data we add it to the buffer
                 }else if((mapTRBEntity[agentMonitored].back()->getTime() < humanRd.lastConfig_[agentMonitored]->getTime())){
 
-                    printf("greater time \n");
-                    for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                      printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                    }
-
-
                     humCur = new Human(agentMonitored);
                     memcpy(humCur, humanRd.lastConfig_[agentMonitored], sizeof(Human));
 
                     mapTRBEntity[humCur->getId()].push_back(humCur->getTime(), humCur);
-                    printf("adding human named: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[agentMonitored]->getName().c_str(), humCur->getName().c_str(), mapTRBEntity[humCur->getId()].back()->getName().c_str());
+                    //printf("adding human named: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[agentMonitored]->getName().c_str(), humCur->getName().c_str(), mapTRBEntity[humCur->getId()].back()->getName().c_str());
 
  
                     // adding monitored joint to the entities.
@@ -253,19 +225,13 @@ int main(int argc, char** argv) {
                     memcpy(jntCur, humanRd.lastConfig_[agentMonitored]->skeleton_[jointMonitoredName], sizeof(Joint));
  
                     mapTRBEntity[jntCur->getId()].push_back(jntCur->getTime(), jntCur);
-                    printf("adding joint named: reader %d %s, tmp %s, in buffer: %s\n", humCur->skeleton_[jointMonitoredName]->getId(), humCur->skeleton_[jointMonitoredName]->getName().c_str(), jntCur->getName().c_str(), mapTRBEntity[jntCur->getId()].back()->getName().c_str());
+                    //printf("adding joint named: reader %d %s, tmp %s, in buffer: %s\n", humCur->skeleton_[jointMonitoredName]->getId(), humCur->skeleton_[jointMonitoredName]->getName().c_str(), jntCur->getName().c_str(), mapTRBEntity[jntCur->getId()].back()->getName().c_str());
                     if(jointMonitoredId == 0)
                       jointMonitoredId = jntCur->getId();
 
                 // Do we need this? Or should we update other entities?
                 } else {
                     //printf("agent recieved without greater time: current is %lu < previous is %lu\n", humanRd.lastConfig_[agentMonitored]->getTime(), mapTRBEntity[agentMonitored].back()->getTime());
-
-                    printf("No greater time \n");
-                    for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                      printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                    }
-
 
                     ros::spinOnce();
                     loop_rate.sleep();
@@ -302,13 +268,13 @@ int main(int argc, char** argv) {
 
                     buffHum.push_back(hum->getTime(), hum);
                     mapTRBEntity[it->first] = buffHum;
-                    printf("adding human name: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[it->first]->getName().c_str(), hum->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                    //printf("adding human name: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[it->first]->getName().c_str(), hum->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
                   // If this is a new data we add it
                   }else if (mapTRBEntity[it->first].back()->getTime() < it->second->getTime()) {
                         Human * hum = new Human(it->first);
                         memcpy(hum, humanRd.lastConfig_[it->first], sizeof(Human));
                         mapTRBEntity[it->first].push_back(hum->getTime(), hum);
-                        printf("adding human name: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[it->first]->getName().c_str(), hum->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                        //printf("adding human name: reader %s, tmp %s, in buffer: %s\n", humanRd.lastConfig_[it->first]->getName().c_str(), hum->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
                     }
                 } // TODO: else remove
 
@@ -333,14 +299,14 @@ int main(int argc, char** argv) {
 
                     buffRob.push_back(rob->getTime(), rob);
                     mapTRBEntity[it->first] = buffRob;
-                    printf("adding robot name: reader %s, tmp %s, in buffer: %s\n", robotRd.lastConfig_[it->first]->getName().c_str(), rob->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                    //printf("adding robot name: reader %s, tmp %s, in buffer: %s\n", robotRd.lastConfig_[it->first]->getName().c_str(), rob->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
 
                   // If this is a new data we add it
                   }else if( mapTRBEntity[it->first].back()->getTime() < it->second->getTime() ) {
                     Robot* rob  = new Robot(it->first);
                     memcpy(rob, robotRd.lastConfig_[it->first], sizeof(Robot));
                     mapTRBEntity[it->first].push_back(rob->getTime(), rob);
-                    printf("adding robot name: reader %s, tmp %s, in buffer: %s\n", robotRd.lastConfig_[it->first]->getName().c_str(), rob->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                    //printf("adding robot name: reader %s, tmp %s, in buffer: %s\n", robotRd.lastConfig_[it->first]->getName().c_str(), rob->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
                     }
                 } // TODO: else remove
 
@@ -364,14 +330,14 @@ int main(int argc, char** argv) {
                     buffObj.push_back(obj->getTime(), obj);
                 
                     mapTRBEntity[it->first] = buffObj;
-                        printf("adding object name: reader %s, tmp %s, in buffer: %s\n", objectRd.lastConfig_[it->first]->getName().c_str(), obj->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                        //printf("adding object name: reader %s, tmp %s, in buffer: %s\n", objectRd.lastConfig_[it->first]->getName().c_str(), obj->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
 
                    // If this is a new data we add it
                    }else if( mapTRBEntity[it->first].back()->getTime() < it->second->getTime()) {
                         Object* obj  = new Object(it->first);
                         memcpy(obj, objectRd.lastConfig_[it->first], sizeof(Object));
                         mapTRBEntity[it->first].push_back(obj->getTime(), obj);
-                        printf("adding object name: reader %s, tmp %s, in buffer: %s\n", objectRd.lastConfig_[it->first]->getName().c_str(), obj->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
+                        //printf("adding object name: reader %s, tmp %s, in buffer: %s\n", objectRd.lastConfig_[it->first]->getName().c_str(), obj->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str());
                     }
                 } // TODO: else remove
 
@@ -391,10 +357,6 @@ int main(int argc, char** argv) {
             //if (!monitoredBufferInit) {
              //   printf("[AGENT_MONITOR][WARNING] agent monitored not found\n");
             //}else{
-                printf("Compute facts\n");
-                for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                  printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                }
                 //printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
                 //printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
                 if (computeMotion2D(mapTRBEntity[agentMonitored], oneSecond / 4, 0.03)) {
@@ -457,10 +419,6 @@ int main(int argc, char** argv) {
                 // If agent is not moving, we compute his joint motion
                 // TODO: do this in 3D!
                 }else{
-                printf("Rwirst\n");
-                for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                  printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                }
                   if (computeMotion2D(mapTRBEntity[jointMonitoredId], oneSecond / 4, 0.03)) {
                     printf("[AGENT_MONITOR][DEBUG] %s of agent %s is moving %lu\n", mapTRBEntity[jointMonitoredId].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
 
@@ -519,10 +477,6 @@ int main(int argc, char** argv) {
                         fact_msg.time = mapTRBEntity[jointMonitoredId].back()->getTime();
                     }
                   }
-                printf("Rwrist end\n");
-                for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-                  printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-                }
                 }
             //}
         }
@@ -534,10 +488,6 @@ int main(int argc, char** argv) {
         factList_msg.factList.clear();
 
         loop_rate.sleep();
-        printf("loop end\n");
-        for (std::map<unsigned int, TRBuffer < Entity* > >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it){
-           printf("entity name list: %s\n", mapTRBEntity[it->first].back()->getName().c_str());
-        }
 
     }
     return 0;
