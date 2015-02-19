@@ -427,26 +427,19 @@ int main(int argc, char** argv) {
                   // What is the distance between joint and objects?
                   for (std::map<unsigned int, TRBuffer < Entity*> >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it) {
                     // if in same room as monitored agent and not monitored agent
-                    if ((roomOfInterest == it->second->getRoomId()) && (it->first != jointMonitoredId)) {
-                      dist3D = bg::distance( mapTRBEntity[jointMonitoredId]->getPosition()), (it->second->getPosition());
+                    if ((roomOfInterest == it->second.back()->getRoomId()) && (it->first != jointMonitoredId)) {
+                      dist3D = bg::distance( mapTRBEntity[jointMonitoredId].back()->getPosition(), it->second.back()->getPosition() );
                                             
-                      switch (dist3D){
-                        case dist3d < 0.05:
-                          dist3DString = "reach";
-                          break;
-                        case dist3d < 0.2:
-                          dist3DString = "close";
-                          break;
-                        case dist3d < 1.5:
-                          dist3DString = "medium";
-                          break;
-                        case dist3d < 8:
-                          dist3DString = "far";
-                          break;
-                        case default:
-                          dist3DString = "out";
-                          break;
-                      }
+                      if( dist3D < 0.05 )
+                        dist3DString = "reach";
+                      else if( dist3D < 0.2 )
+                        dist3DString = "close";
+                      else if( dist3D < 1.5 )
+                        dist3DString = "medium";
+                      else if( dist3D < 8 )
+                        dist3DString = "far";
+                      else
+                        dist3DString = "out";
 
                       //Fact distance
                       fact_msg.property = "distance";
