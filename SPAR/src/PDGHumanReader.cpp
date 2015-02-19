@@ -14,8 +14,10 @@ void PDGHumanReader::humanJointStateCallBack(const PDG::HumanList::ConstPtr& msg
     for (unsigned int i = 0; i < msg->humanList.size(); i++) {
         
         // If this human is not assigned we have to allocate data.
-        if (lastConfig_[msg->humanList[i].meAgent.meEntity.id] == NULL)
+        if (lastConfig_[msg->humanList[i].meAgent.meEntity.id] == NULL){
             curHuman = new Human(msg->humanList[i].meAgent.meEntity.id);
+            curHuman->setName(msg->humanList[i].meAgent.meEntity.name);
+        }
         else
             curHuman = lastConfig_[msg->humanList[i].meAgent.meEntity.id];
 
@@ -25,7 +27,6 @@ void PDGHumanReader::humanJointStateCallBack(const PDG::HumanList::ConstPtr& msg
         Mobility curHumanMobility = FULL;
 
         curHuman->setMobility(curHumanMobility);
-        curHuman->setName(msg->humanList[i].meAgent.meEntity.name);
         curHuman->setTime(msg->humanList[i].meAgent.meEntity.time);
 
         humanPosition.set<0>(msg->humanList[i].meAgent.meEntity.positionX);
@@ -47,16 +48,16 @@ void PDGHumanReader::humanJointStateCallBack(const PDG::HumanList::ConstPtr& msg
           for (unsigned int i_jnt = 0; i_jnt < msg->humanList[i].meAgent.skeletonNames.size(); i_jnt++) {
 
             // If this joint is not assigned we have to allocate data.
-            if (lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ] == NULL)
+            if (lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ] == NULL){
               curJnt = new Joint(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.id, msg->humanList[i].meAgent.meEntity.id);
-            else
+              curJnt->setName(msg->humanList[i].meAgent.skeletonNames[i_jnt]);
+            }else
               curJnt = lastConfig_[curHuman->getId()]->skeleton_[msg->humanList[i].meAgent.skeletonNames[i_jnt] ];
 
             std::vector<double> jointOrientation;
             bg::model::point<double, 3, bg::cs::cartesian> jointPosition;
         
             curJnt->setAgentId(curHuman->getId());
-            curJnt->setName(msg->humanList[i].meAgent.skeletonNames[i_jnt]);
             curJnt->setTime(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.time);
 
             jointPosition.set<0>(msg->humanList[i].meAgent.skeletonJoint[i_jnt].meEntity.positionX);

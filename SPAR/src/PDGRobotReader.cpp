@@ -15,12 +15,12 @@ void PDGRobotReader::robotJointStateCallBack(const PDG::RobotList::ConstPtr& msg
     for (unsigned int i = 0; i < msg->robotList.size(); i++) {
 
         // If this robot is not assigned we have to allocate data.
-        if (lastConfig_[msg->robotList[i].meAgent.meEntity.id] == NULL)
+        if (lastConfig_[msg->robotList[i].meAgent.meEntity.id] == NULL){
             curRobot = new Robot(msg->robotList[i].meAgent.meEntity.id);
+            curRobot->setName(msg->robotList[i].meAgent.meEntity.name);
+        }
         else
             curRobot = lastConfig_[msg->robotList[i].meAgent.meEntity.id];
-
-        curRobot->setName(msg->robotList[i].meAgent.meEntity.name);
 
         std::vector<double> robOrientation;
         bg::model::point<double, 3, bg::cs::cartesian> robPosition;
