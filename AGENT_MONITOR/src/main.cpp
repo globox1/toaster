@@ -419,6 +419,53 @@ int main(int argc, char** argv) {
                 // If agent is not moving, we compute his joint motion
                 // TODO: do this in 3D!
                 }else{
+                   
+                  std::map<unsigned int, double> mapIdValue;
+                  double dist3D;
+                  std::string dist3DString;
+
+                  // What is the distance between joint and objects?
+                  for (std::map<unsigned int, TRBuffer < Entity*> >::iterator it = mapTRBEntity.begin(); it != mapTRBEntity.end(); ++it) {
+                    // if in same room as monitored agent and not monitored agent
+                    if ((roomOfInterest == it->second->getRoomId()) && (it->first != jointMonitoredId)) {
+                      dist3D = bg::distance( mapTRBEntity[jointMonitoredId]->getPosition()), (it->second->getPosition());
+                                            
+                      switch (dist3D){
+                        case dist3d < 0.05:
+                          dist3DString = "reach";
+                          break;
+                        case dist3d < 0.2:
+                          dist3DString = "close";
+                          break;
+                        case dist3d < 1.5:
+                          dist3DString = "medium";
+                          break;
+                        case dist3d < 8:
+                          dist3DString = "far";
+                          break;
+                        case default:
+                          dist3DString = "out";
+                          break;
+                      }
+
+                      //Fact distance
+                      fact_msg.property = "distance";
+                      fact_msg.subProperty = "3D";
+                      fact_msg.subjectId = jointMonitoredId;
+                      fact_msg.subjectName = mapTRBEntity[jointMonitoredId].back()->getName().c_str();
+                      fact_msg.targetId = it->first;
+                      fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
+                      fact_msg.valueType = 0;
+                      fact_msg.stringValue = dist3DString;
+                      fact_msg.doubleValue = dist3D;
+                      fact_msg.confidence = 90;
+                      fact_msg.time =  mapTRBEntity[jointMonitoredId].back()->getTime();
+
+                      factList_msg.factList.push_back(fact_msg);
+
+                    }
+                  }
+                  // Is the joint moving?
                   if (computeMotion2D(mapTRBEntity[jointMonitoredId], oneSecond / 4, 0.03)) {
                     printf("[AGENT_MONITOR][DEBUG] %s of agent %s is moving %lu\n", mapTRBEntity[jointMonitoredId].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
 
@@ -437,7 +484,6 @@ int main(int argc, char** argv) {
 
 
                     double angleDirection = 0.0;
-                    std::map<unsigned int, double> mapIdValue;
 
                     // We compute the direction toward fact:
                     angleDirection = computeMotion2DDirection(mapTRBEntity[jointMonitoredId], oneSecond);
