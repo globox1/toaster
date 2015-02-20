@@ -34,22 +34,24 @@ void Pr2RobotReader::initJointsName() {
 }
 
 void Pr2RobotReader::init() {
-    Robot* curRobot = new Robot(robotIdOffset_);
+    //Robot* curRobot = new Robot(1);
+    Robot* curRobot = new Robot(1);
+
     //TODO: setname with id
     curRobot->setName("pr2");
     initJointsName();
     if (fullRobot_) {
         for (unsigned int i = 0; i < pr2JointsName_.size(); i++) {
-            curRobot->skeleton_[pr2JointsName_[i]] = new Joint(10001 + i, robotIdOffset_);
+            curRobot->skeleton_[pr2JointsName_[i]] = new Joint(10001 + i, 1);
         }
     }
-    lastConfig_[robotIdOffset_] = curRobot;
+    lastConfig_[1] = curRobot;
 }
 
 void Pr2RobotReader::updateRobot(tf::TransformListener &listener) {
     tf::StampedTransform transform;
-    Robot* curRobot = lastConfig_[robotIdOffset_];
-    Joint* curJoint = new Joint(10001, robotIdOffset_);
+    Robot* curRobot = lastConfig_[1];
+    Joint* curJoint = new Joint(10001, 1);
     curJoint->setName(pr2JointsName_[0]);
 
     // We start with base:

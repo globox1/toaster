@@ -363,13 +363,15 @@ int main(int argc, char** argv) {
                     printf("[AGENT_MONITOR][DEBUG] %s is moving %lu\n", mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
 
 
-                    //Fact moving
-                    fact_msg.property = "isMoving";
-                    fact_msg.subProperty = "";
-                    fact_msg.subjectId = 101;
-                    fact_msg.stringValue = "true";
-                    fact_msg.confidence = 90;
-                    fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
+                //Fact moving
+                fact_msg.property = "isMoving";
+                fact_msg.propertyType = "motion";
+                fact_msg.subProperty = "agent";
+                fact_msg.subjectId = 101;
+                fact_msg.subjectName = mapTRBEntity[agentMonitored].back()->getName().c_str();
+                fact_msg.stringValue = "true";
+                fact_msg.confidence = 90;
+                fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
 
                     factList_msg.factList.push_back(fact_msg);
 
@@ -385,15 +387,16 @@ int main(int argc, char** argv) {
                             printf("[AGENT_MONITOR][DEBUG] %s is moving toward %s with a confidence of %f\n",
                                 mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str(), it->second);
 
-                        //Fact moving toward
-                        fact_msg.property = "isMovingToward";
-                        fact_msg.subProperty = "Direction";
-                        fact_msg.subjectId = agentMonitored;
-                        fact_msg.subjectName = mapTRBEntity[agentMonitored].back()->getName().c_str();
-                        fact_msg.targetId = it->first;
-                        fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
-                        fact_msg.confidence = it->second * 100;
-                        fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
+                    //Fact moving toward
+                    fact_msg.property = "isMovingToward";
+                    fact_msg.propertyType = "motion";
+                    fact_msg.subProperty = "Direction";
+                    fact_msg.subjectId = agentMonitored;
+                    fact_msg.subjectName = mapTRBEntity[agentMonitored].back()->getName().c_str();
+                    fact_msg.targetId = it->first;
+                    fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
+                    fact_msg.confidence = it->second * 100;
+                    fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
 
                         factList_msg.factList.push_back(fact_msg);
                     }
@@ -404,15 +407,16 @@ int main(int argc, char** argv) {
                         printf("[AGENT_MONITOR][DEBUG] agent %s has a deltadist toward  %s of %f\n",
                                 mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[it->first].back()->getName().c_str(), it->second);
 
-                        //Fact moving toward
-                        fact_msg.property = "isMovingToward";
-                        fact_msg.subProperty = "Distance";
-                        fact_msg.subjectId = agentMonitored;
-                        fact_msg.subjectName = mapTRBEntity[agentMonitored].back()->getName().c_str();
-                        fact_msg.targetId = it->first;
-                        fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
-                        fact_msg.confidence = it->second * 100;
-                        fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
+                    //Fact moving toward
+                    fact_msg.property = "isMovingToward";
+                    fact_msg.propertyType = "motion";
+                    fact_msg.subProperty = "Distance";
+                    fact_msg.subjectId = agentMonitored;
+                    fact_msg.subjectName = mapTRBEntity[agentMonitored].back()->getName().c_str();
+                    fact_msg.targetId = it->first;
+                    fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
+                    fact_msg.confidence = it->second * 100;
+                    fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
 
                     }
 
@@ -443,9 +447,10 @@ int main(int argc, char** argv) {
 
                       //Fact distance
                       fact_msg.property = "distance";
+                      fact_msg.propertyType = "position";
                       fact_msg.subProperty = "3D";
                       fact_msg.subjectId = jointMonitoredId;
-                      fact_msg.subjectName = mapTRBEntity[jointMonitoredId].back()->getName().c_str();
+                      fact_msg.subjectName = jointMonitoredName.c_str();
                       fact_msg.targetId = it->first;
                       fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
                       fact_msg.valueType = 0;
@@ -465,9 +470,10 @@ int main(int argc, char** argv) {
 
                     //Fact moving
                     fact_msg.property = "isMoving";
-                    fact_msg.subProperty = "";
+                        fact_msg.propertyType = "motion";
+                        fact_msg.subProperty = "joint";
                     fact_msg.subjectId = jointMonitoredId;
-                    fact_msg.subjectName = mapTRBEntity[jointMonitoredId].back()->getName().c_str();
+                    fact_msg.subjectName = jointMonitoredName.c_str();
                     fact_msg.valueType = 0;
                     fact_msg.stringValue = "true";
                     fact_msg.confidence = 90;
@@ -488,9 +494,10 @@ int main(int argc, char** argv) {
 
                         //Fact moving toward
                         fact_msg.property = "isMovingToward";
+                            fact_msg.propertyType = "motion";
                         fact_msg.subProperty = "Direction";
                         fact_msg.subjectId = jointMonitoredId;
-                        fact_msg.subjectName = mapTRBEntity[jointMonitoredId].back()->getName().c_str();
+                        fact_msg.subjectName = jointMonitoredName.c_str();
                         fact_msg.targetId = it->first;
                         fact_msg.targetName = mapTRBEntity[it->first].back()->getName().c_str();
                         fact_msg.confidence = it->second * 100;
@@ -507,6 +514,7 @@ int main(int argc, char** argv) {
 
                         //Fact moving toward
                         fact_msg.property = "isMovingToward";
+                        fact_msg.propertyType = "motion";
                         fact_msg.subProperty = "Distance";
                         fact_msg.subjectId = jointMonitoredId;
                         fact_msg.subjectName = mapTRBEntity[jointMonitoredId].back()->getName().c_str();
