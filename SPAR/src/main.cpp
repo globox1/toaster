@@ -136,11 +136,60 @@ int main(int argc, char** argv) {
     livingroom->setName("livingroom");
     livingroom->setIsRoom(true);
 
+    // Then some standard area:
+    // TODO: put this in a service with parameters
+    // We create 3 Area for the demo:
+    origin.set<0>(4.28);
+    origin.set<1>(5.37);
+    CircleArea* work_location_1 = new CircleArea(5, origin, 1.1);
+    interacting->setMyOwner(0);
+    interacting->setName("WORK_LOCATION_1");
+    interacting->setIsRoom(false);
+
+    // station 2
+    origin.set<0>(6.03);
+    origin.set<1>(5.74);
+    CircleArea* work_location_2 = new CircleArea(6, origin, 1.1);
+    danger->setMyOwner(0);
+    danger->setName("WORK_LOCATION_2");
+    danger->setIsRoom(false);
+
+    // station 3
+    origin.set<0>(6.65);
+    origin.set<1>(7.45);
+    CircleArea* work_location_3 = new CircleArea(7, origin, 1.1);
+    danger->setMyOwner(0);
+    danger->setName("WORK_LOCATION_3");
+    danger->setIsRoom(false);
+
+
+    // We define here some room (Adream)
+    double pointsTable[5][2] = {
+        {5.4, 7.82},
+        {3.0, 7.82},
+        {3.0, 8.0},
+        {5.4, 8.0},
+        {5.4, 7.82}
+    };
+
+    PolygonArea* tableArea = new PolygonArea(8, pointsTable, 5);
+    tableArea->setName("STOCK_TABLE");
+    livingroom->setIsRoom(false);
+
+
+
     mapArea[0] = interacting;
     mapArea[1] = danger;
     mapArea[2] = bedroom;
     mapArea[3] = kitchen;
     mapArea[4] = livingroom;
+    mapArea[5] = work_location_1;
+    mapArea[6] = work_location_2;
+    mapArea[7] = work_location_3;
+    mapArea[8] = tableArea;
+
+
+
 
     /************************/
     /* Start of the Ros loop*/
@@ -205,15 +254,83 @@ int main(int argc, char** argv) {
                 //Fact
                 fact_msg.property = "isInArea";
                 fact_msg.propertyType = "position";
-                fact_msg.subProperty = "Danger";
+                fact_msg.subProperty = "danger";
                 fact_msg.subjectId = 101;
                 fact_msg.targetId = 1;
                 fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
                 fact_msg.targetName = robotRd.lastConfig_[1]->getName();
-                fact_msg.confidence = 100;
+                fact_msg.confidence = 90;
                 fact_msg.time = humanRd.lastConfig_[101]->getTime();
 
                 factList_msg.factList.push_back(fact_msg);
+
+
+                } else if (humanRd.lastConfig_[101]->isInArea(5)) {
+                // We will compute here facts that are relevant when human is in danger zone
+
+                //Fact
+                fact_msg.property = "isInArea";
+                fact_msg.propertyType = "position";
+                fact_msg.subProperty = "support";
+                fact_msg.subjectId = 101;
+                fact_msg.targetId = 0;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = mapArea[5]->getName();
+                fact_msg.confidence = 90;
+                fact_msg.time = humanRd.lastConfig_[101]->getTime();
+
+                factList_msg.factList.push_back(fact_msg);
+
+
+                } else if (humanRd.lastConfig_[101]->isInArea(6)) {
+                // We will compute here facts that are relevant when human is in danger zone
+
+                //Fact
+                fact_msg.property = "isInArea";
+                fact_msg.propertyType = "position";
+                fact_msg.subProperty = "support";
+                fact_msg.subjectId = 101;
+                fact_msg.targetId = 0;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = mapArea[6]->getName();
+                fact_msg.confidence = 90;
+                fact_msg.time = humanRd.lastConfig_[101]->getTime();
+
+                factList_msg.factList.push_back(fact_msg);
+
+                } else if (humanRd.lastConfig_[101]->isInArea(7)) {
+                // We will compute here facts that are relevant when human is in danger zone
+
+                //Fact
+                fact_msg.property = "isInArea";
+                fact_msg.propertyType = "position";
+                fact_msg.subProperty = "support";
+                fact_msg.subjectId = 101;
+                fact_msg.targetId = 0;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = mapArea[7]->getName();
+                fact_msg.confidence = 90;
+                fact_msg.time = humanRd.lastConfig_[101]->getTime();
+
+                factList_msg.factList.push_back(fact_msg);
+
+                } else if (humanRd.lastConfig_[101]->isInArea(8)) {
+                // We will compute here facts that are relevant when human is in danger zone
+
+                //Fact
+                fact_msg.property = "isInArea";
+                fact_msg.propertyType = "position";
+                fact_msg.subProperty = "support";
+                fact_msg.subjectId = 101;
+                fact_msg.targetId = 0;
+                fact_msg.subjectName =  humanRd.lastConfig_[101]->getName();
+                fact_msg.targetName = mapArea[8]->getName();
+                fact_msg.confidence = 90;
+                fact_msg.time = humanRd.lastConfig_[101]->getTime();
+
+                factList_msg.factList.push_back(fact_msg);
+
+
             } else {
                 // We will compute here facts that are relevant for human out of interacting zone
             }
