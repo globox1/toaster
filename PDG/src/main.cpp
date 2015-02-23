@@ -86,10 +86,10 @@ int main(int argc, char** argv) {
                     
                     //Fact
                     fact_msg.property = "isPresent";
-                    fact_msg.subjectId = sparkObjectRd.objectIdOffset_ + i;
+                    fact_msg.subjectId = 1000 + i;
                     fact_msg.confidence = 90;
-                    fact_msg.time = sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i]->getTime();
-                    fact_msg.subjectName = sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i]->getName();
+                    fact_msg.time = sparkObjectRd.lastConfig_[1000 + i]->getTime();
+                    fact_msg.subjectName = sparkObjectRd.lastConfig_[1000 + i]->getName();
                     fact_msg.valueType = 0;
                     fact_msg.stringValue = "true";
  
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
                     
                     
                     //Object
-                    feelEntity(sparkObjectRd.lastConfig_[sparkObjectRd.objectIdOffset_ + i], object_msg.meEntity);
+                    feelEntity(sparkObjectRd.lastConfig_[1000 + i], object_msg.meEntity);
                     objectList_msg.objectList.push_back(object_msg);
 
                     //printf("[PDG] Last time object %d: %lu\n", i, vimanObjectRd.lastConfig_[vimanObjectRd.objectIdOffset_ + i]->getTime());

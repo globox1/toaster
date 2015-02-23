@@ -353,13 +353,24 @@ int main(int argc, char** argv) {
 
             // Compute motion:
             unsigned long oneSecond = pow(10, 9);
+            unsigned long timeMotion = oneSecond/2;
+            double dist;
+            //unsigned long movingTime = oneSecond/2;
+            double movingDist = 0.1;
+            //unsigned long notMovingTime = oneSecond/2;
+            double notMovingDist = 0.3;
 
             //if (!monitoredBufferInit) {
              //   printf("[AGENT_MONITOR][WARNING] agent monitored not found\n");
             //}else{
                 //printf("[AGENT_MONITOR][DEBUG] agent from buffer %s is null? %d \n [AGENT_MONITOR][DEBUG] agent from reader %s is null? %d \n", mapTRBEntity[agentMonitored].back()->getName().c_str(),  mapTRBEntity[agentMonitored].back() == NULL, humanRd.lastConfig_[agentMonitored]->getName().c_str(), humanRd.lastConfig_[agentMonitored] == NULL);  
                 //printf("[AGENT_MONITOR][WARNING] agent monitored buffer size %d, max_size %d, full %d, back is null? %d\n", mapTRBEntity[agentMonitored].size(), mapTRBEntity[agentMonitored].max_size(), mapTRBEntity[agentMonitored].full(), mapTRBEntity[agentMonitored].back() == NULL);
-                if (computeMotion2D(mapTRBEntity[agentMonitored], oneSecond / 4, 0.03)) {
+                if (mapTRBEntity[agentMonitored].getDataFromIndex(mapTRBEntity[agentMonitored].size() - 2)->isMoving)
+                  dist = movingDist;
+                else
+                  dist = notMovingDist;
+
+                if (computeMotion2D(mapTRBEntity[agentMonitored], timeMotion, dist)) {
                     printf("[AGENT_MONITOR][DEBUG] %s is moving %lu\n", mapTRBEntity[agentMonitored].back()->getName().c_str(), mapTRBEntity[agentMonitored].back()->getTime());
 
 
@@ -374,6 +385,8 @@ int main(int argc, char** argv) {
                 fact_msg.time = mapTRBEntity[agentMonitored].back()->getTime();
 
                     factList_msg.factList.push_back(fact_msg);
+
+                    mapTRBEntity[agentMonitored].back()->isMoving = true;
 
 
                     double angleDirection = 0.0;
@@ -423,7 +436,7 @@ int main(int argc, char** argv) {
                 // If agent is not moving, we compute his joint motion
                 // TODO: do this in 3D!
                 }else{
-                   
+                   mapTRBEntity[agentMonitored].back()->isMoving = false;
                   std::map<unsigned int, double> mapIdValue;
                   double dist3D;
                   std::string dist3DString;

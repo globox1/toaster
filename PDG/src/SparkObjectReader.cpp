@@ -25,7 +25,7 @@ void SparkObjectReader::init(std::string posterName) {
 }
 
 void SparkObjectReader::initObject(unsigned int i) {
-    MovableObject* myObject = new MovableObject(objectIdOffset_ + i);
+    MovableObject* myObject = new MovableObject(1000 + i);
     //Initialize position:
     myObject->position_.set<0>(0.0);
     myObject->position_.set<1>(0.0);
@@ -34,7 +34,7 @@ void SparkObjectReader::initObject(unsigned int i) {
     myObject->orientation_.push_back(0.0);
     myObject->orientation_.push_back(0.0);
     myObject->orientation_.push_back(0.0);
-    lastConfig_[objectIdOffset_ + i] = myObject;
+    lastConfig_[1000 + i] = myObject;
 }
 
 void SparkObjectReader::updateObjects() {
@@ -54,18 +54,18 @@ void SparkObjectReader::updateObjects() {
         for (i_obj = 0; i_obj < nbObjects_; i_obj++) {
 
             //Set position and orientation
-            lastConfig_[objectIdOffset_ + i_obj]->position_.set<0>(sparkPosterStruct_.freeflyer[i_obj].q[0]);
-            lastConfig_[objectIdOffset_ + i_obj]->position_.set<1>(sparkPosterStruct_.freeflyer[i_obj].q[1]);
-            lastConfig_[objectIdOffset_ + i_obj]->position_.set<2>(sparkPosterStruct_.freeflyer[i_obj].q[2]);
-            lastConfig_[objectIdOffset_ + i_obj]->orientation_[0] = sparkPosterStruct_.freeflyer[i_obj].q[3];
-            lastConfig_[objectIdOffset_ + i_obj]->orientation_[1] = sparkPosterStruct_.freeflyer[i_obj].q[4];
-            lastConfig_[objectIdOffset_ + i_obj]->orientation_[2] = sparkPosterStruct_.freeflyer[i_obj].q[5];
+            lastConfig_[1000 + i_obj]->position_.set<0>(sparkPosterStruct_.freeflyer[i_obj].q[0]);
+            lastConfig_[1000 + i_obj]->position_.set<1>(sparkPosterStruct_.freeflyer[i_obj].q[1]);
+            lastConfig_[1000 + i_obj]->position_.set<2>(sparkPosterStruct_.freeflyer[i_obj].q[2]);
+            lastConfig_[1000 + i_obj]->orientation_[0] = sparkPosterStruct_.freeflyer[i_obj].q[3];
+            lastConfig_[1000 + i_obj]->orientation_[1] = sparkPosterStruct_.freeflyer[i_obj].q[4];
+            lastConfig_[1000 + i_obj]->orientation_[2] = sparkPosterStruct_.freeflyer[i_obj].q[5];
 
             //Set the time and name
-            lastConfig_[objectIdOffset_ + i_obj]->setName( sparkPosterStruct_.freeflyer[i_obj].name.name );
-            lastConfig_[objectIdOffset_ + i_obj]->setTime(sparkPosterStruct_.time);
+            lastConfig_[1000 + i_obj]->setName( sparkPosterStruct_.freeflyer[i_obj].name.name );
+            lastConfig_[1000 + i_obj]->setTime(sparkPosterStruct_.time);
 
-            lastConfig_[objectIdOffset_ + i_obj]->setConfidence(65);
+            lastConfig_[1000 + i_obj]->setConfidence(65);
 
 
         }
