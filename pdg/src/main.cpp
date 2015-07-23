@@ -4,6 +4,7 @@
 #include "pdg/NiutHumanReader.h"
 #include "pdg/GroupHumanReader.h"
 #include "pdg/MocapHumanReader.h"
+#include "pdg/MocapHumanReaderAdream.h"
 
 // Robots
 #include "pdg/Pr2RobotReader.h"
@@ -14,7 +15,7 @@
 #include "pdg/SparkObjectReader.h"
 
 // Facts
-#include "pdg/SparkFactReader.h"
+//#include "pdg/SparkFactReader.h"
 
 
 // Message generated class
@@ -41,6 +42,7 @@ bool morseHuman_ = false;
 bool niutHuman_ = false;
 bool groupHuman_ = false;
 bool mocapHuman_ = false;
+bool mocapHumanAdream_ = false;
 
 bool pr2Robot_ = false;
 bool spencerRobot_ = false;
@@ -130,6 +132,7 @@ bool addStream(toaster_msgs::AddStream::Request &req,
     niutHuman_ = req.niutHuman;
     groupHuman_ = req.groupHuman;
     mocapHuman_ = req.mocapHuman;
+    mocapHumanAdream_  = req.mocapHumanAdream;
     pr2Robot_ = req.pr2Robot;
     spencerRobot_ = req.spencerRobot;
     vimanObject_ = req.vimanObject;
@@ -218,6 +221,7 @@ int main(int argc, char** argv) {
     MorseHumanReader morseHumanRd(node, humanFullConfig_);
     //NiutHumanReader niutHumanRd()
     MocapHumanReader mocapHumanRd(node, "/optitrack_person/tracked_persons");
+    MocapHumanReaderAdream mocapHumanRdAdream(node, "/optitrack/bodies/Rigid_Body_1", "/optitrack/bodies/Rigid_Body_2");
 
     Pr2RobotReader pr2RobotRd(robotFullConfig_);
     SpencerRobotReader spencerRobotRd(robotFullConfig_);
@@ -225,7 +229,7 @@ int main(int argc, char** argv) {
     // These 2 use special genom library!
     SparkObjectReader sparkObjectRd;
     VimanObjectReader vimanObjectRd;
-    SparkFactReader sparkFactRd;
+    //SparkFactReader sparkFactRd;
 
 
     //Services
@@ -278,10 +282,10 @@ int main(int argc, char** argv) {
             vimanObjectRd.init("morseViman");
             initVimanObject = true;
         }
-        if (sparkFact_ && !initSparkFact) {
-            sparkFactRd.init("sparkFactList");
-            initSparkFact = true;
-        }
+        //if (sparkFact_ && !initSparkFact) {
+        //    sparkFactRd.init("sparkFactList");
+        //    initSparkFact = true;
+       // }
 
         //update data
 
@@ -300,8 +304,8 @@ int main(int argc, char** argv) {
         if (spencerRobot_)
             spencerRobotRd.updateRobot(listener);
 
-        if (sparkFact_)
-            sparkFactRd.updateFacts();
+        //if (sparkFact_)
+            //sparkFactRd.updateFacts();
 
         ///////////////////////////////////////////////////////////////////////
 
@@ -357,9 +361,43 @@ int main(int argc, char** argv) {
 
                     //Human
                     fillEntity(it->second, human_msg.meAgent.meEntity);
-                    humanList_msg.humanList.push_back(human_msg);
+              
 
-                    entNameId_[it->second->getName()] = it->first;
+		  humanList_msg.humanList.push_back(human_msg);
+
+                   entNameId_[it->second->getName()] = it->first;
+
+                }
+            }
+        }
+
+	if (mocapHumanAdream_) { 
+            for (std::map<unsigned int, Human*>::iterator it = mocapHumanRdAdream.lastConfig_.begin(); it != mocapHumanRdAdream.lastConfig_.end(); ++it) {
+           
+		if (mocapHumanRdAdream.isPresent(it->first)) {
+
+                    //Fact
+                    fact_msg.property = "isPresent";
+                    fact_msg.subjectId = it->first;
+                    fact_msg.subjectName = it->second->getName();
+                    fact_msg.stringValue = "true";
+                    fact_msg.confidence = 0.90;
+                    fact_msg.factObservability = 1.0;
+                    fact_msg.time = it->second->getTime();
+                    fact_msg.valueType = 0;
+
+                    factList_msg.factList.push_back(fact_msg);
+
+
+                    //Human
+                    fillEntity(it->second, human_msg.meAgent.meEntity);
+		  human_msg.meAgent.skeletonNames.push_back("rightHand");
+		fillEntity(it->second->skeleton_["rightHand"], joint_msg.meEntity);
+		 human_msg.meAgent.skeletonJoint.push_back(joint_msg);
+
+                  humanList_msg.humanList.push_back(human_msg);
+
+                   entNameId_[it->second->getName()] = it->first;
 
                 }
             }
@@ -639,7 +677,7 @@ int main(int argc, char** argv) {
         human_pub.publish(humanList_msg);
         robot_pub.publish(robotList_msg);
         fact_pub.publish(factList_msg);
-        fact_pub_spark.publish(sparkFactRd.currentFactList_);
+        //fact_pub_spark.publish(sparkFactRd.currentFactList_);
 
         ros::spinOnce();
 

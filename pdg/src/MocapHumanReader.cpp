@@ -21,6 +21,8 @@ void MocapHumanReader::optitrackCallback(const spencer_tracking_msgs::TrackedPer
     ros::Time now = ros::Time::now();
     Human* curHuman;
 
+	std::cout << msg->tracks.size() << std::endl;	
+
     try {
         std::string frame;
         frame = msg->header.frame_id;
